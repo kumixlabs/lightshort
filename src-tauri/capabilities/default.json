@@ -1,0 +1,15 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Default permissions for LightShort",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "core:event:default",
+    "opener:default",
+    "dialog:default",
+    "process:default",
+    "process:allow-restart",
+    "updater:default"
+  ]
+}

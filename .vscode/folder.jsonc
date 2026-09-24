@@ -1,0 +1,3 @@
+// List of disabled folders (relative to workspace root)
+// Folders in this list will not be opened when using "Open all files in directory"
+["src-tauri/gen", "src-tauri/target"]

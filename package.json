@@ -1,0 +1,65 @@
+{
+  "name": "lightshort",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "A lightweight tool for creating engaging short-form videos.",
+  "homepage": "https://github.com/kumixlabs/lightshort",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kumixlabs/lightshort.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kumixlabs/lightshort/issues"
+  },
+  "author": "Kumix Labs <hai@kumix.io>",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "tauri": "tauri",
+    "format": "biome format --write",
+    "format:check": "biome check",
+    "lint": "biome check",
+    "lint:fix": "biome check --write --unsafe",
+    "types:check": "tsc --noEmit",
+    "clean": "rm -rf dist",
+    "clean:all": "rm -rf bun.lock dist node_modules src-tauri/Cargo.lock src-tauri/gen src-tauri/target",
+    "bump": "bumpp",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "@base-ui/react": "^1.8.0",
+    "@fontsource-variable/geist": "^5.3.0",
+    "@kumix/ui": "^0.3.16",
+    "@kumix/utils": "^0.3.0",
+    "@tauri-apps/api": "^2.11.1",
+    "@tauri-apps/plugin-dialog": "^2.7.3",
+    "@tauri-apps/plugin-opener": "^2.5.5",
+    "@tauri-apps/plugin-process": "^2.3.1",
+    "@tauri-apps/plugin-updater": "^2.12.0",
+    "class-variance-authority": "^0.7.1",
+    "lucide-react": "^1.47.0",
+    "motion": "^13.4.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "zustand": "^5.0.15"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.14",
+    "@kumix/biome-config": "^0.1.0",
+    "@tailwindcss/vite": "^4.3.3",
+    "@tauri-apps/cli": "^2.11.5",
+    "@types/bun": "^1.4.2",
+    "@types/node": "^26.6.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "bumpp": "^12.3.0",
+    "shadcn": "^4.21.0",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.0"
+  }
+}
