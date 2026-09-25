@@ -39,7 +39,6 @@ Thumbs.db
 # Editor / tooling
 .vscode/*
 !.vscode/extensions.json
-!.vscode/folder.jsonc
 .idea/
 .turbo/
 .claude/

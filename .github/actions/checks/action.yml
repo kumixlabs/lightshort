@@ -29,6 +29,10 @@ runs:
       shell: bash
       run: bun run types:check
 
+    - name: Test
+      shell: bash
+      run: bun test
+
     - name: Build
       shell: bash
       run: bun run build
@@ -52,3 +56,8 @@ runs:
       shell: bash
       working-directory: src-tauri
       run: cargo check
+
+    - name: Rust test
+      shell: bash
+      working-directory: src-tauri
+      run: cargo test

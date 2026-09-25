@@ -8,12 +8,12 @@
 }
 
 :root {
-  --primary: #2563eb;
+  --primary: oklch(0.546 0.245 262.881);
   --sidebar-width-mobile: 18rem;
 }
 
 .dark {
-  --primary: #3b82f6;
+  --primary: oklch(0.623 0.214 259.815);
 }
 
 ::-webkit-scrollbar {

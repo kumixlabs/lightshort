@@ -7,18 +7,27 @@ import { basename, formatDuration } from "@/lib/utils";
 import { useStore } from "@/stores/app-store";
 import type { PanelKey } from "@/types";
 
-const PANELS: { key: PanelKey; label: string; hint: string }[] = [
-  { key: "main", label: "Main Video", hint: "1 row = 1 short (mixed)" },
-  { key: "cta", label: "CTA Video", hint: "Inserted in the middle" },
-  { key: "reaction", label: "Reaction Video", hint: "Green screen PiP, looped, muted" },
-];
-
 export function VideoPanels() {
   const lists = useStore((s) => s.lists);
   const queue = useStore((s) => s.queue);
+  const opts = useStore((s) => s.opts);
   const addVideos = useStore((s) => s.addVideos);
   const removeVideo = useStore((s) => s.removeVideo);
   const setError = useStore((s) => s.setError);
+
+  const panels: { key: PanelKey; label: string; hint: string; optional?: boolean }[] = [
+    { key: "main", label: "Main Video", hint: "1 row = 1 short (mixed)" },
+    { key: "cta", label: "CTA Video", hint: "Inserted in the middle", optional: true },
+    {
+      key: "reaction",
+      label: opts.mode === "satisfying" ? "Satisfying Video" : "Reaction Video",
+      hint:
+        opts.mode === "satisfying"
+          ? "Split screen (right half), looped, muted"
+          : "Green screen PiP, looped, muted",
+      optional: true,
+    },
+  ];
 
   const handleAdd = async (key: PanelKey) => {
     try {
@@ -33,16 +42,21 @@ export function VideoPanels() {
 
   return (
     <div className="flex flex-col gap-3">
-      {PANELS.map(({ key, label, hint }) => {
+      {panels.map(({ key, label, hint, optional }) => {
         const items = lists[key];
         return (
           <div key={key} className="rounded-lg border border-border bg-card">
             <div className="flex items-center justify-between gap-2 px-4 py-2.5">
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <span className="font-semibold text-sm">{label}</span>
                 <Badge variant={items.length ? "secondary" : "outline"} size="sm">
                   {items.length}
                 </Badge>
+                {optional && (
+                  <Badge variant="outline" size="xs" className="text-muted-foreground">
+                    Optional
+                  </Badge>
+                )}
                 <span className="text-muted-foreground/70 text-xs">{hint}</span>
               </div>
               <Button variant="outline" size="sm" disabled={!!queue} onClick={() => handleAdd(key)}>

@@ -15,6 +15,8 @@ export default defineConfig({
   build: {
     emptyOutDir: true,
     sourcemap: false,
+    // ponytail: language packs are lazy-loaded shiki chunks; large files are fine for a desktop app
+    chunkSizeWarningLimit: 1000,
     rollupOptions: {
       input: {
         main: resolve(import.meta.dirname, "index.html"),

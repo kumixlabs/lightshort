@@ -1,4 +1,5 @@
 export type Theme = "light" | "dark" | "system";
+export type OverlayMode = "reaction" | "satisfying";
 
 export interface VideoInfo {
   w: number;
@@ -8,11 +9,13 @@ export interface VideoInfo {
 }
 
 export interface ComposeOptions {
+  mode: OverlayMode;
   pipScale: number;
   margin: number;
   color: string;
   similarity: number;
   blend: number;
+  blur: number;
 }
 
 export type Aspect = "16:9" | "9:16";
@@ -24,8 +27,8 @@ export interface VideoItem {
 
 export interface Combo {
   m: VideoItem;
-  c: VideoItem;
-  r: VideoItem;
+  c?: VideoItem;
+  r?: VideoItem;
   name: string;
 }
 

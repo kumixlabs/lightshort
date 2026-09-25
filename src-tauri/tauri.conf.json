@@ -16,7 +16,7 @@
         "title": "LightShort",
         "width": 1180,
         "height": 760,
-        "minWidth": 960,
+        "minWidth": 500,
         "minHeight": 640,
         "center": true,
         "resizable": true

@@ -1,8 +1,6 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-import { Badge } from "@kumix/ui/reui/badge";
 import { Button } from "@kumix/ui/ui/button";
-import { formatDuration } from "@/lib/utils";
 import { useStore } from "@/stores/app-store";
 import type { Combo } from "@/types";
 
@@ -16,8 +14,6 @@ export function ComboNavigator({ combos, currentCombo }: ComboNavigatorProps) {
   const setComboIdx = useStore((s) => s.setComboIdx);
 
   if (!currentCombo) return null;
-
-  const curTotalDur = currentCombo.m.info.dur + currentCombo.c.info.dur;
 
   return (
     <div className="flex items-center justify-between gap-2">
@@ -44,11 +40,6 @@ export function ComboNavigator({ combos, currentCombo }: ComboNavigatorProps) {
           <ChevronRight className="size-4" />
         </Button>
       </div>
-
-      <Badge variant="outline" size="sm" className="shrink-0">
-        {curTotalDur > 0 ? formatDuration(currentCombo.m.info.dur / 2) : ""} → CTA →{" "}
-        {formatDuration(curTotalDur)}
-      </Badge>
     </div>
   );
 }
