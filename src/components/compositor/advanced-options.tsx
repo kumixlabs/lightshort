@@ -40,9 +40,9 @@ export function AdvancedOptions() {
   };
 
   return (
-    <Collapsible defaultOpen={false} className="rounded-lg border border-border bg-card">
+    <Collapsible defaultOpen={false} className="border-border bg-card rounded-lg border">
       <div className="flex items-center justify-between px-4 py-2.5">
-        <CollapsibleTrigger className="flex flex-1 cursor-pointer items-center text-muted-foreground text-sm hover:text-foreground">
+        <CollapsibleTrigger className="text-muted-foreground hover:text-foreground flex flex-1 cursor-pointer items-center text-sm">
           Advanced options
         </CollapsibleTrigger>
         <Button variant="ghost" size="icon-sm" title="Reset to default" onClick={resetOpts}>
@@ -50,11 +50,11 @@ export function AdvancedOptions() {
         </Button>
       </div>
 
-      <CollapsibleContent className="flex flex-col gap-4 border-border border-t px-4 py-3">
+      <CollapsibleContent className="border-border flex flex-col gap-4 border-t px-4 py-3">
         {/* Reaction Mode Options */}
         {opts.mode === "reaction" && (
           <>
-            <label className="grid gap-2 text-muted-foreground text-sm">
+            <label className="text-muted-foreground grid gap-2 text-sm">
               <span>Reaction size {Math.round(opts.pipScale * 100)}%</span>
               <Slider
                 min={10}
@@ -64,7 +64,7 @@ export function AdvancedOptions() {
               />
             </label>
 
-            <label className="grid gap-2 text-muted-foreground text-sm">
+            <label className="text-muted-foreground grid gap-2 text-sm">
               <span>Margin {opts.margin}px</span>
               <Slider
                 min={0}
@@ -75,10 +75,10 @@ export function AdvancedOptions() {
               />
             </label>
 
-            <div className="grid gap-2 text-muted-foreground text-sm">
+            <div className="text-muted-foreground grid gap-2 text-sm">
               <span>Chroma key color</span>
               <div className="flex flex-wrap items-center gap-2">
-                <div className="relative flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-md border border-border">
+                <div className="border-border relative flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-md border">
                   <input
                     type="color"
                     className="absolute inset-0 size-full cursor-pointer opacity-0"
@@ -122,7 +122,7 @@ export function AdvancedOptions() {
 
         {/* Satisfying Mode Options */}
         {opts.mode === "satisfying" && (
-          <label className="grid gap-2 text-muted-foreground text-sm">
+          <label className="text-muted-foreground grid gap-2 text-sm">
             <span>Background blur {opts.blur}px</span>
             <Slider
               min={5}

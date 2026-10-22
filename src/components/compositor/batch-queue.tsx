@@ -115,10 +115,10 @@ export function BatchQueue({ combos }: BatchQueueProps) {
   return (
     <div className="flex flex-col gap-3">
       {/* Output folder */}
-      <div className="flex items-center justify-between gap-2 rounded-lg border border-border bg-card px-4 py-3">
+      <div className="border-border bg-card flex items-center justify-between gap-2 rounded-lg border px-4 py-3">
         <div className="flex min-w-0 items-center gap-2">
-          <span className="font-semibold text-sm">Output</span>
-          <span className="truncate text-muted-foreground text-sm">
+          <span className="text-sm font-semibold">Output</span>
+          <span className="text-muted-foreground truncate text-sm">
             {outDir || "Select output folder…"}
           </span>
         </div>
@@ -178,7 +178,7 @@ export function BatchQueue({ combos }: BatchQueueProps) {
             <div className="flex min-w-0 flex-col gap-4 py-1">
               <DialogHeader className="min-w-0">
                 <div className="flex items-center gap-2">
-                  <Loader2 className="size-4 shrink-0 animate-spin text-primary" />
+                  <Loader2 className="text-primary size-4 shrink-0 animate-spin" />
                   <DialogTitle>Rendering Shorts</DialogTitle>
                 </div>
                 <DialogDescription
@@ -191,10 +191,10 @@ export function BatchQueue({ combos }: BatchQueueProps) {
 
               <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="font-medium text-muted-foreground">
+                  <span className="text-muted-foreground font-medium">
                     Video {queue.done + 1} of {queue.total}
                   </span>
-                  <span className="font-mono text-foreground tabular-nums">{overallPct}%</span>
+                  <span className="text-foreground font-mono tabular-nums">{overallPct}%</span>
                 </div>
                 <Progress value={overallPct} />
               </div>
@@ -216,7 +216,7 @@ export function BatchQueue({ combos }: BatchQueueProps) {
             /* FAILURE STATE */
             <div className="flex min-w-0 flex-col gap-4 py-1">
               <DialogHeader className="min-w-0">
-                <div className="flex items-center gap-2 text-destructive">
+                <div className="text-destructive flex items-center gap-2">
                   <AlertCircle className="size-5 shrink-0" />
                   <DialogTitle>Render Completed with Errors</DialogTitle>
                 </div>
@@ -225,8 +225,8 @@ export function BatchQueue({ combos }: BatchQueueProps) {
                 </DialogDescription>
               </DialogHeader>
 
-              <div className="max-h-40 overflow-y-auto rounded-md border border-border bg-muted/30 p-2">
-                <ul className="list-disc space-y-1 pl-4 text-muted-foreground text-xs">
+              <div className="border-border bg-muted/30 max-h-40 overflow-y-auto rounded-md border p-2">
+                <ul className="text-muted-foreground list-disc space-y-1 pl-4 text-xs">
                   {failures.map((f) => (
                     <li key={f} className="truncate" title={f}>
                       {f}
@@ -256,7 +256,7 @@ export function BatchQueue({ combos }: BatchQueueProps) {
                   <DialogTitle>Render Complete</DialogTitle>
                 </div>
                 <DialogDescription
-                  className="wrap-break-word min-w-0 text-muted-foreground text-xs"
+                  className="text-muted-foreground min-w-0 text-xs wrap-break-word"
                   title={doneMsg}
                 >
                   {doneMsg || `Successfully rendered ${combos.length} shorts.`}

@@ -7,11 +7,11 @@ export function ModeSelector() {
   const updateOpts = useStore((s) => s.updateOpts);
 
   return (
-    <div className="grid grid-cols-2 gap-1 rounded-lg border border-border bg-muted/40 p-1">
+    <div className="border-border bg-muted/40 grid grid-cols-2 gap-1 rounded-lg border p-1">
       <button
         type="button"
         onClick={() => updateOpts({ mode: "reaction" })}
-        className={`flex cursor-pointer items-center justify-center gap-2 rounded-md px-3 py-2 font-medium text-xs transition-all ${
+        className={`flex cursor-pointer items-center justify-center gap-2 rounded-md px-3 py-2 text-xs font-medium transition-all ${
           mode === "reaction"
             ? "bg-card text-foreground shadow-sm"
             : "text-muted-foreground hover:text-foreground"
@@ -23,7 +23,7 @@ export function ModeSelector() {
       <button
         type="button"
         onClick={() => updateOpts({ mode: "satisfying" })}
-        className={`flex cursor-pointer items-center justify-center gap-2 rounded-md px-3 py-2 font-medium text-xs transition-all ${
+        className={`flex cursor-pointer items-center justify-center gap-2 rounded-md px-3 py-2 text-xs font-medium transition-all ${
           mode === "satisfying"
             ? "bg-card text-foreground shadow-sm"
             : "text-muted-foreground hover:text-foreground"

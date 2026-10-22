@@ -45,10 +45,10 @@ export function VideoPanels() {
       {panels.map(({ key, label, hint, optional }) => {
         const items = lists[key];
         return (
-          <div key={key} className="rounded-lg border border-border bg-card">
+          <div key={key} className="border-border bg-card rounded-lg border">
             <div className="flex items-center justify-between gap-2 px-4 py-2.5">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="font-semibold text-sm">{label}</span>
+                <span className="text-sm font-semibold">{label}</span>
                 <Badge variant={items.length ? "secondary" : "outline"} size="sm">
                   {items.length}
                 </Badge>
@@ -66,11 +66,11 @@ export function VideoPanels() {
             </div>
 
             {items.length > 0 && (
-              <div className="flex max-h-44 flex-col gap-1 overflow-y-auto border-border border-t px-2 py-2">
+              <div className="border-border flex max-h-44 flex-col gap-1 overflow-y-auto border-t px-2 py-2">
                 {items.map((it, i) => (
                   <div
                     key={`${it.path}-${i}`}
-                    className="group flex items-center gap-2 rounded px-2 py-1 hover:bg-accent"
+                    className="group hover:bg-accent flex items-center gap-2 rounded px-2 py-1"
                   >
                     <span className="truncate text-sm">{basename(it.path)}</span>
                     <Badge variant="secondary" size="sm" className="ml-auto shrink-0">

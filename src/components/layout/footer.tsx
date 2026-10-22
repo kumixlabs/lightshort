@@ -38,13 +38,13 @@ export function Footer() {
   }, []);
 
   return (
-    <footer className="mt-auto border-border border-t bg-card/60 px-6 py-2 text-muted-foreground text-xs backdrop-blur-sm">
+    <footer className="border-border bg-card/60 text-muted-foreground mt-auto border-t px-6 py-2 text-xs backdrop-blur-sm">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4">
         {/* Left: FFmpeg Status */}
         <div className="flex min-w-0 items-center gap-2">
           {ffmpegStatus === "loading" && (
             <div className="flex items-center gap-1.5">
-              <span className="size-2 animate-pulse rounded-full bg-muted-foreground/40" />
+              <span className="bg-muted-foreground/40 size-2 animate-pulse rounded-full" />
               <span>Checking FFmpeg...</span>
             </div>
           )}
@@ -52,24 +52,24 @@ export function Footer() {
           {ffmpegStatus === "active" && ffmpegPath && (
             <div className="flex min-w-0 items-center gap-1.5" title={ffmpegPath}>
               <span className="size-2 shrink-0 rounded-full bg-emerald-500" />
-              <span className="shrink-0 font-medium text-foreground">FFmpeg:</span>
-              <span className="truncate font-mono text-[11px] text-muted-foreground">
+              <span className="text-foreground shrink-0 font-medium">FFmpeg:</span>
+              <span className="text-muted-foreground truncate font-mono text-[11px]">
                 {ffmpegPath}
               </span>
             </div>
           )}
 
           {ffmpegStatus === "missing" && (
-            <div className="flex items-center gap-2 text-destructive">
-              <span className="size-2 shrink-0 rounded-full bg-destructive" />
+            <div className="text-destructive flex items-center gap-2">
+              <span className="bg-destructive size-2 shrink-0 rounded-full" />
               <span className="font-medium">FFmpeg not detected.</span>
-              <span className="hidden text-muted-foreground sm:inline">
+              <span className="text-muted-foreground hidden sm:inline">
                 Please install FFmpeg and add to PATH.
               </span>
               <button
                 type="button"
                 onClick={() => openUrl("https://ffmpeg.org/download.html")}
-                className="cursor-pointer font-medium text-primary underline underline-offset-2 hover:opacity-80"
+                className="text-primary cursor-pointer font-medium underline underline-offset-2 hover:opacity-80"
               >
                 Install guide
               </button>

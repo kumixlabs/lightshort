@@ -3,7 +3,7 @@
 A lightweight desktop tool for creating engaging 9:16 vertical short-form videos.
 
 <p align="center">
-  <img src="public/logo.png" alt="LightShort Logo" width="128" height="128" />
+  <img src="public/logo.png" alt="LightShort Logo" width="128" height="128">
 </p>
 
 ## Overview

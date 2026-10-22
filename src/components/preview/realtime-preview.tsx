@@ -544,7 +544,7 @@ export function RealtimePreview({ paths, info, opts }: RealtimePreviewProps) {
             <RotateCcw className="size-3.5" />
           </Button>
         </div>
-        <span className="font-mono text-muted-foreground text-xs tabular-nums">
+        <span className="text-muted-foreground font-mono text-xs tabular-nums">
           {t.toFixed(1)}s / {total.toFixed(1)}s
         </span>
       </div>

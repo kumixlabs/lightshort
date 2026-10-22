@@ -27,7 +27,7 @@ export function ComboNavigator({ combos, currentCombo }: ComboNavigatorProps) {
         >
           <ChevronLeft className="size-4" />
         </Button>
-        <span className="truncate text-muted-foreground text-xs">
+        <span className="text-muted-foreground truncate text-xs">
           {comboIdx + 1}/{combos.length}: {currentCombo.name}
         </span>
         <Button

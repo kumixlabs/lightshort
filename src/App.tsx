@@ -118,7 +118,7 @@ export default function App() {
   }, []);
 
   return (
-    <div className="flex min-h-screen flex-col bg-background text-foreground">
+    <div className="bg-background text-foreground flex min-h-screen flex-col">
       <Header />
 
       <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-4 p-6">
@@ -142,7 +142,7 @@ export default function App() {
                 opts={opts}
               />
             ) : (
-              <div className="flex aspect-9/16 items-center justify-center rounded-lg border border-border border-dashed p-6 text-center text-muted-foreground text-sm">
+              <div className="border-border text-muted-foreground flex aspect-9/16 items-center justify-center rounded-lg border border-dashed p-6 text-center text-sm">
                 Add at least 1 main video to preview
               </div>
             )}

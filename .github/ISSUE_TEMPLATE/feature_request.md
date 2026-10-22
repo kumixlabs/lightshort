@@ -1,4 +1,5 @@
 ---
+
 name: Feature request
 about: Suggest an idea for this project
 title: ""
@@ -19,6 +20,5 @@ A clear and concise description of any alternative solutions or features you've 
 Add any other context, code examples, or screenshots about the feature request here.
 
 **Scope check** (LightShort is a lightweight tool for creating engaging short-form videos):
-
 - [ ] Fits "simple offline TOTP authenticator" spirit
 - [ ] Does not add cloud sync, password manager, or browser extension

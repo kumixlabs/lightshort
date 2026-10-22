@@ -76,12 +76,12 @@ export function Header() {
   };
 
   return (
-    <header className="flex items-center justify-between border-border border-b bg-background/80 px-4 py-3 backdrop-blur-sm">
+    <header className="border-border bg-background/80 flex items-center justify-between border-b px-4 py-3 backdrop-blur-sm">
       <div className="flex min-w-0 items-center gap-2.5">
         <img src="/favicon.png" alt="LightShort" className="size-6 rounded" />
         <div className="flex flex-col">
-          <h1 className="font-semibold text-sm leading-tight">LightShort</h1>
-          <p className="hidden text-[11px] text-muted-foreground sm:block">
+          <h1 className="text-sm leading-tight font-semibold">LightShort</h1>
+          <p className="text-muted-foreground hidden text-[11px] sm:block">
             A lightweight tool for creating engaging short-form videos.
           </p>
         </div>
@@ -119,7 +119,7 @@ export function Header() {
         </Button>
 
         <DropdownMenu>
-          <DropdownMenuTrigger className="flex size-8 cursor-pointer items-center justify-center rounded-md border border-border hover:bg-accent">
+          <DropdownMenuTrigger className="border-border hover:bg-accent flex size-8 cursor-pointer items-center justify-center rounded-md border">
             <ThemeIcon className="size-4" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
