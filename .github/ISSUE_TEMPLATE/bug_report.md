@@ -20,6 +20,7 @@ Steps to reproduce the behavior:
 A clear and concise description of what you expected to happen.
 
 **Environment:**
+
 - LightShort version: [e.g., 0.1.0]
 - OS: [e.g., Windows 11, macOS 15, Ubuntu 24.04]
 

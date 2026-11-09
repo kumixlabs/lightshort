@@ -9,6 +9,7 @@ A lightweight desktop tool for creating engaging 9:16 vertical short-form videos
 ## Overview
 
 LightShort automates the production of vertical short-form content (YouTube Shorts, TikTok, Instagram Reels) from standard desktop clips:
+
 - **Dedicated 9:16 Output (1080×1920)** — Native vertical layout with blurred background padding and automatic aspect ratio scaling.
 - **Dual Secondary Video Modes**:
   - **Reaction (Chroma Key PiP)**: Overlays a green screen reaction video in the corner with real-time chroma keying, custom hex/swatch colors, scale (10%–50%), and margin controls.
