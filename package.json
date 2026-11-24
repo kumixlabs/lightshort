@@ -40,7 +40,7 @@
     "@tauri-apps/plugin-process": "^2.4.0",
     "@tauri-apps/plugin-updater": "^2.14.1",
     "class-variance-authority": "^0.7.1",
-    "lucide-react": "^1.77.0",
+    "lucide-react": "^1.79.0",
     "motion": "^14.14.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
