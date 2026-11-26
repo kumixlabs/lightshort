@@ -1,6 +1,6 @@
 [package]
 name = "lightshort"
-version = "0.1.0"
+version = "0.1.1"
 description = "LightShort - A lightweight tool for creating engaging short-form videos."
 authors = ["Kumix Labs"]
 license = "MIT"

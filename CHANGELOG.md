@@ -5,6 +5,23 @@ All notable changes to LightShort will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.1] - 2026-11-26
+
+### Added
+
+- **Automatic updates**: checks GitHub Releases on launch and downloads and installs new versions in the background, then relaunches. While clips are loaded or a render is running, the download is staged instead and the header button turns into **Restart to update**. Toggle with **Auto-update** in the header menu (on by default); the header button also installs manually.
+- **Silent clips**: videos without an audio stream (screen recordings, muted footage) now render in both `reaction` and `satisfying` modes. Missing audio is replaced by generated silence, so the output always has a valid audio track.
+
+### Fixed
+
+- **Robust video probing**: an unknown frame rate (`0/0`) falls back to 30 fps instead of producing an invalid filtergraph, a missing stream duration falls back to the container duration, and files without any duration fail with a clear error instead of an empty render.
+- `check_ffmpeg` now also verifies that `ffprobe` is on `PATH`, since probing depends on it.
+- The live preview's background dimming now matches the rendered output.
+
+### Removed
+
+- Unused 16:9 layout branch and `Aspect` type in the compositor; output is always 1080×1920.
+
 ## [0.1.0] - 2026-03-25
 
 ### Added
