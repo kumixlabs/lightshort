@@ -7,21 +7,24 @@
 - `bun run format` — biome format write
 - `bun run build` — frontend build (tsc + vite)
 - `cargo check --manifest-path src-tauri/Cargo.toml` — rust typecheck
+- `cargo test --manifest-path src-tauri/Cargo.toml` — rust tests (`src-tauri/tests/`)
 - `bun tauri dev` — full dev launch
 - `bun tauri build` — production build
 
 # Architecture
 
 - Product: LightShort — A lightweight, offline-first tool for creating engaging 9:16 vertical short-form videos.
-- Version: bump ALL three files together — `package.json`, `src-tauri/tauri.conf.json`, `src-tauri/Cargo.toml`. Tauri reads version from `tauri.conf.json`; mismatched versions cause wrong release tags.
+- Version: bump ALL three files together — `package.json`, `src-tauri/tauri.conf.json`, `src-tauri/Cargo.toml`. Tauri reads version from `tauri.conf.json`; mismatched versions cause wrong release tags. Every bump gets a `CHANGELOG.md` entry.
 - State: zustand store at `src/stores/app-store.ts` with dual persistence (`localStorage` + OS config path at `%APPDATA%/lightshort/config.json`).
-- Rust backend: `src-tauri/src/lib.rs` — video probe (`ffprobe`), FFmpeg video compositor (`compose`), cancellable process killer (`cancel_compose`), system detection (`check_ffmpeg`), native folder launcher (`open_folder`), and config I/O.
+- Rust backend: `src-tauri/src/lib.rs` — video probe (`ffprobe`), FFmpeg video compositor (`compose`), cancellable process killer (`cancel_compose`), system detection (`check_ffmpeg`, needs `ffmpeg` + `ffprobe`), native folder launcher (`open_folder`), and config I/O. `probe` is parsed by `parse_probe` (unit-tested in `src-tauri/tests/`).
 - Frontend: React 19 + TypeScript + `@kumix/ui` + Tailwind CSS.
 - Compositor: `src/lib/compositor.ts` generates FFmpeg filtergraphs for 9:16 Shorts:
   - `reaction` mode: Main 9:16 framed with blurred background + chroma key green screen PiP.
   - `satisfying` mode: 9:16 blurred background + side-by-side split screen (540px Main left | 540px Satisfying right).
   - Optional CTA: spliced at mid-duration when present.
   - Optional Secondary: supports Main-only composition without secondary video.
+  - Clips without an audio stream get generated silence (`anullsrc`), so `[aout]` always exists.
+- Updater: store actions `checkForUpdates()` / `installUpdate(auto?)`. `App.tsx` checks on launch and installs in the background when `settings.autoUpdate` is on; it stages the download instead of restarting while clips are loaded or a render runs.
 - Realtime Preview: `src/components/preview/realtime-preview.tsx` provides synchronized multi-video playback, canvas chroma keying, auto-pausing on render start, and 3-stage seamless segment transitions.
 - Release CI: `.github/workflows/release.yml` (Windows/macOS/Linux matrix; release on `v*` tags).
 

@@ -3,6 +3,7 @@ import { convertFileSrc } from "@tauri-apps/api/core";
 import { Pause, Play, RotateCcw } from "lucide-react";
 
 import { Button } from "@kumix/ui/ui/button";
+import { BG_DIM } from "@/lib/compositor";
 import { useStore } from "@/stores/app-store";
 import type { ComposeOptions, VideoInfo } from "@/types";
 
@@ -406,7 +407,7 @@ export function RealtimePreview({ paths, info, opts }: RealtimePreviewProps) {
               muted
               playsInline
               loop
-              style={{ filter: `blur(${opts.blur ?? 20}px) brightness(0.6)` }}
+              style={{ filter: `blur(${opts.blur ?? 20}px) brightness(${BG_DIM})` }}
               className={`absolute inset-0 size-full scale-[1.15] object-cover ${showCta ? "invisible" : ""}`}
             />
 
@@ -448,7 +449,7 @@ export function RealtimePreview({ paths, info, opts }: RealtimePreviewProps) {
               src={src(paths.main)}
               muted
               playsInline
-              style={{ filter: `blur(${opts.blur ?? 20}px) brightness(0.55)` }}
+              style={{ filter: `blur(${opts.blur ?? 20}px) brightness(${BG_DIM})` }}
               className={`absolute inset-0 size-full scale-[1.15] object-cover ${showCta ? "invisible" : ""}`}
             />
             {/* biome-ignore lint/a11y/useMediaCaption: local preview */}
@@ -497,7 +498,7 @@ export function RealtimePreview({ paths, info, opts }: RealtimePreviewProps) {
               src={src(paths.cta)}
               muted
               playsInline
-              style={{ filter: `blur(${opts.blur ?? 20}px) brightness(0.55)` }}
+              style={{ filter: `blur(${opts.blur ?? 20}px) brightness(${BG_DIM})` }}
               className={`absolute inset-0 size-full scale-[1.15] object-cover ${showCta ? "" : "invisible"}`}
             />
             {/* biome-ignore lint/a11y/useMediaCaption: local preview */}

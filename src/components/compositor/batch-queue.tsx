@@ -74,7 +74,7 @@ export function BatchQueue({ combos }: BatchQueueProps) {
           { main: m.path, cta: c?.path, reaction: r?.path, output },
           m.info,
           opts,
-          "9:16",
+          c?.info,
         );
         await composeVideo(args);
       } catch (e) {

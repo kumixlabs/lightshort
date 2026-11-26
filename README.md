@@ -21,6 +21,7 @@ LightShort automates the production of vertical short-form content (YouTube Shor
 - **Cancellable Rendering** — Abort active render queues at any moment. LightShort safely terminates FFmpeg process trees and cleans up partial output files.
 - **Dual Persistent Storage** — Settings and selected output folders are preserved across sessions in both `localStorage` and the operating system's configuration directory (`%APPDATA%/lightshort/config.json` on Windows).
 - **System PATH Detection** — Live FFmpeg and FFprobe detection displayed in the status footer with direct links for missing binaries.
+- **Automatic Updates** — Checks GitHub Releases on launch and installs new versions in the background (toggle in the header menu). Never restarts away loaded clips or a running render.
 
 ## Tech Stack
 

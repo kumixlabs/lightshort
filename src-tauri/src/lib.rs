@@ -86,51 +86,72 @@ fn open_folder(path: String) -> Result<(), String> {
 
 #[tauri::command]
 fn check_ffmpeg() -> Result<String, String> {
-    #[cfg(windows)]
-    let mut cmd = Command::new("where.exe");
-    #[cfg(not(windows))]
-    let mut cmd = Command::new("which");
-
-    cmd.arg("ffmpeg");
-    no_window(&mut cmd);
-    let out = cmd.output().map_err(|e| format!("failed to check ffmpeg: {e}"))?;
-    if out.status.success() {
-        let text = String::from_utf8_lossy(&out.stdout);
-        let path = text.lines().next().unwrap_or("").trim().to_string();
-        if !path.is_empty() {
-            return Ok(path);
-        }
-    }
-    Err("FFmpeg not found in system PATH".into())
+    // Both binaries are required: ffmpeg composes, ffprobe probes.
+    let find = |bin: &str| -> Option<String> {
+        let mut cmd = Command::new(if cfg!(windows) { "where.exe" } else { "which" });
+        cmd.arg(bin);
+        no_window(&mut cmd);
+        let out = cmd.output().ok()?;
+        out.status.success().then(|| {
+            String::from_utf8_lossy(&out.stdout)
+                .lines()
+                .next()
+                .unwrap_or("")
+                .trim()
+                .to_string()
+        })
+    };
+    let ffmpeg = find("ffmpeg").filter(|p| !p.is_empty()).ok_or("FFmpeg not found in system PATH")?;
+    find("ffprobe").filter(|p| !p.is_empty()).ok_or("FFprobe not found in system PATH")?;
+    Ok(ffmpeg)
 }
 
 #[tauri::command]
 fn probe(path: String) -> Result<serde_json::Value, String> {
     let mut cmd = Command::new("ffprobe");
     cmd.args([
-        "-v", "error", "-select_streams", "v:0",
-        "-show_entries", "stream=width,height,avg_frame_rate:format=duration",
-        "-of", "csv=p=0", &path,
+        "-v", "error",
+        "-show_entries", "stream=codec_type,width,height,avg_frame_rate,duration:format=duration",
+        "-of", "json", &path,
     ]);
     no_window(&mut cmd);
     let out = cmd.output().map_err(|e| format!("failed to execute ffprobe: {e}"))?;
     if !out.status.success() {
         return Err(String::from_utf8_lossy(&out.stderr).trim().to_string());
     }
-    let text = String::from_utf8_lossy(&out.stdout);
-    let mut lines = text.lines();
-    let stream = lines.next().ok_or("ffprobe: empty output")?;
-    let dur_line = lines.next().unwrap_or("");
-    let parts: Vec<&str> = stream.split(',').collect();
-    let w: i64 = parts.first().and_then(|s| s.parse().ok()).ok_or("failed to parse width")?;
-    let h: i64 = parts.get(1).and_then(|s| s.parse().ok()).ok_or("failed to parse height")?;
-    let fps_raw = parts.get(2).ok_or("failed to parse fps")?.to_string();
-    let fps = match fps_raw.split_once('/') {
-        Some((n, d)) => n.parse::<f64>().unwrap_or(0.0) / d.parse::<f64>().unwrap_or(1.0),
-        None => fps_raw.parse().unwrap_or(0.0),
-    };
-    let dur: f64 = dur_line.split(',').last().unwrap_or("0").trim().parse().unwrap_or(0.0);
-    Ok(json!({ "w": w, "h": h, "fps": fps, "dur": dur }))
+    parse_probe(&out.stdout)
+}
+
+/// Parses `ffprobe -show_entries stream=codec_type,width,height,avg_frame_rate,duration:format=duration -of json`.
+pub fn parse_probe(bytes: &[u8]) -> Result<serde_json::Value, String> {
+    let info: serde_json::Value =
+        serde_json::from_slice(bytes).map_err(|e| format!("ffprobe: invalid output: {e}"))?;
+    let streams = info["streams"].as_array().cloned().unwrap_or_default();
+    let video = streams
+        .iter()
+        .find(|s| s["codec_type"] == "video")
+        .ok_or("ffprobe: no video stream")?;
+    let w = video["width"].as_i64().ok_or("failed to parse width")?;
+    let h = video["height"].as_i64().ok_or("failed to parse height")?;
+    // Some containers report "0/0"; the fps filter only needs a sane target.
+    let fps = video["avg_frame_rate"]
+        .as_str()
+        .and_then(|s| match s.split_once('/') {
+            Some((n, d)) => Some(n.parse::<f64>().ok()? / d.parse::<f64>().ok()?),
+            None => s.parse().ok(),
+        })
+        .filter(|f| f.is_finite() && *f > 0.0)
+        .unwrap_or(30.0);
+    // Stream duration can be "N/A"; fall back to the container duration.
+    // Without one the filtergraph would trim to nothing, so fail loudly instead.
+    let dur = std::iter::once(video["duration"].as_str())
+        .chain(std::iter::once(info["format"]["duration"].as_str()))
+        .flatten()
+        .filter_map(|s| s.parse::<f64>().ok())
+        .find(|d| *d > 0.0)
+        .ok_or("ffprobe: no duration")?;
+    let audio = streams.iter().any(|s| s["codec_type"] == "audio");
+    Ok(json!({ "w": w, "h": h, "fps": fps, "dur": dur, "audio": audio }))
 }
 
 #[tauri::command]

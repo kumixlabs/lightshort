@@ -1,6 +1,9 @@
+import { relaunch } from "@tauri-apps/plugin-process";
+import { check } from "@tauri-apps/plugin-updater";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
+import { toastError, toastInfo } from "@kumix/ui/custom/toast";
 import { getDefaultVideoDir, writeAppConfig } from "@/lib/commands";
 import { DEFAULT_OPTS } from "@/lib/compositor";
 import type { AppSettings, ComposeOptions, PanelKey, QueueProgress, VideoItem } from "@/types";
@@ -43,13 +46,17 @@ interface AppState {
   error: string;
 
   // Updater
+  /** Newer release found by the update check. */
   updateAvailable: string | null;
+  /** Download + install in flight. */
+  updating: boolean;
+  /** Downloaded by an automatic update; relaunch is held so loaded clips are not restarted away. */
+  updatePendingRestart: boolean;
 
   // Settings
   settings: AppSettings;
 
   // Actions
-  setOpts: (opts: ComposeOptions) => void;
   updateOpts: (patch: Partial<ComposeOptions>) => void;
   resetOpts: () => void;
   resetOutDir: () => void;
@@ -63,13 +70,21 @@ interface AppState {
   setFailures: (failures: string[]) => void;
   setDoneMsg: (doneMsg: string) => void;
   setError: (error: string) => void;
-  setUpdateAvailable: (version: string | null) => void;
+  /** Checks for a release; returns its version, or null when up to date. Throws on network failure. */
+  checkForUpdates: () => Promise<string | null>;
+  /** Installs the update and relaunches. `auto` only downloads when clips are loaded or a render runs. */
+  installUpdate: (auto?: boolean) => Promise<void>;
   updateSettings: (patch: Partial<AppSettings>) => void;
 }
 
+/** Release found by the latest check; reused by installUpdate so it is not fetched twice. */
+let latest: Awaited<ReturnType<typeof check>> | null = null;
+/** Release downloaded by an automatic update, waiting for the user to restart. */
+let staged: Awaited<ReturnType<typeof check>> | null = null;
+
 export const useStore = create<AppState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       lists: { main: [], cta: [], reaction: [] },
       comboIdx: 0,
       outDir: "",
@@ -79,11 +94,13 @@ export const useStore = create<AppState>()(
       doneMsg: "",
       error: "",
       updateAvailable: null,
+      updating: false,
+      updatePendingRestart: false,
       settings: {
         theme: "system",
+        autoUpdate: true,
       },
 
-      setOpts: (opts) => set({ opts }),
       updateOpts: (patch) => set((s) => ({ opts: { ...s.opts, ...patch } })),
       resetOpts: () => set((s) => ({ opts: { ...DEFAULT_OPTS, mode: s.opts.mode } })),
       resetOutDir: () => {
@@ -113,7 +130,59 @@ export const useStore = create<AppState>()(
       setFailures: (failures) => set({ failures }),
       setDoneMsg: (doneMsg) => set({ doneMsg }),
       setError: (error) => set({ error }),
-      setUpdateAvailable: (updateAvailable) => set({ updateAvailable }),
+      checkForUpdates: async () => {
+        const update = await check();
+        latest = update?.available ? update : null;
+        set({ updateAvailable: latest?.version ?? null });
+        return latest?.version ?? null;
+      },
+      installUpdate: async (auto = false) => {
+        const s = get();
+        if (s.updating) return;
+        if (s.queue) {
+          toastInfo({ message: "Render in progress — install the update after it finishes." });
+          return;
+        }
+        try {
+          if (staged) {
+            // Downloaded by an automatic update: install it, then restart.
+            // Windows exits inside install() and lets the installer restart the app.
+            const update = staged;
+            staged = null;
+            set({ updatePendingRestart: false });
+            await update.install();
+            await relaunch();
+            return;
+          }
+          const update = latest ?? (await check());
+          if (!update?.available) {
+            latest = null;
+            set({ updateAvailable: null });
+            return;
+          }
+          latest = update;
+          set({ updating: true, updateAvailable: update.version });
+          await update.download();
+          latest = null;
+          // An automatic update must not restart away loaded clips or a render that started
+          // during the download: stage it until the user clicks the header button.
+          if (auto && (get().queue || Object.values(get().lists).some((list) => list.length > 0))) {
+            staged = update;
+            set({ updatePendingRestart: true });
+            toastInfo({ message: `LightShort ${update.version} downloaded — restart to update.` });
+            return;
+          }
+          await update.install();
+          await relaunch();
+        } catch (err) {
+          toastError({
+            message: auto ? "Auto-update failed" : "Failed to install update",
+            description: err instanceof Error ? err.message : String(err),
+          });
+        } finally {
+          set({ updating: false });
+        }
+      },
       updateSettings: (patch) =>
         set((s) => ({
           settings: { ...s.settings, ...patch },
@@ -127,6 +196,12 @@ export const useStore = create<AppState>()(
         opts: s.opts,
         outDir: s.outDir,
       }),
+      // Deep-merge settings so keys added in newer versions keep their defaults
+      // instead of becoming `undefined` for users with older persisted state.
+      merge: (persisted, current) => {
+        const p = (persisted ?? {}) as Partial<AppState>;
+        return { ...current, ...p, settings: { ...current.settings, ...p.settings } };
+      },
     },
   ),
 );

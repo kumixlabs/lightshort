@@ -6,6 +6,8 @@ export interface VideoInfo {
   h: number;
   fps: number;
   dur: number;
+  /** False when the file has no audio stream (screen recordings, silent clips). */
+  audio: boolean;
 }
 
 export interface ComposeOptions {
@@ -17,8 +19,6 @@ export interface ComposeOptions {
   blend: number;
   blur: number;
 }
-
-export type Aspect = "16:9" | "9:16";
 
 export interface VideoItem {
   path: string;
@@ -42,4 +42,6 @@ export interface QueueProgress {
 
 export interface AppSettings {
   theme: Theme;
+  /** Check on launch, then download + install in the background. */
+  autoUpdate: boolean;
 }

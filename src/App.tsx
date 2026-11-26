@@ -1,6 +1,5 @@
 import { useEffect, useMemo } from "react";
 import { listen } from "@tauri-apps/api/event";
-import { check } from "@tauri-apps/plugin-updater";
 
 import { ToastContainer } from "@kumix/ui/custom/toast";
 import { AdvancedOptions } from "@/components/compositor/advanced-options";
@@ -102,19 +101,14 @@ export default function App() {
     };
   }, []);
 
-  // Silent update check once per launch (lightread pattern)
+  // Silent update check once per launch; installs in the background when auto-update is on.
   useEffect(() => {
-    let cancelled = false;
-    check()
-      .then((u) => {
-        if (!cancelled && u?.available) {
-          useStore.setState({ updateAvailable: u.version });
-        }
+    const { checkForUpdates, installUpdate, settings } = useStore.getState();
+    checkForUpdates()
+      .then((version) => {
+        if (version && settings.autoUpdate) return installUpdate(true);
       })
       .catch(() => {});
-    return () => {
-      cancelled = true;
-    };
   }, []);
 
   return (

@@ -1,14 +1,14 @@
 import { useState } from "react";
-import { relaunch } from "@tauri-apps/plugin-process";
-import { check } from "@tauri-apps/plugin-updater";
-import { Download, Loader2, Monitor, Moon, RefreshCw, Sun } from "lucide-react";
+import { Download, Loader2, Monitor, Moon, RefreshCw, RotateCcw, Sun } from "lucide-react";
 
 import { toastError, toastInfo, toastSuccess } from "@kumix/ui/custom/toast";
 import { Button } from "@kumix/ui/ui/button";
 import {
   DropdownMenu,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@kumix/ui/ui/dropdown-menu";
 import { useTheme } from "@/hooks/use-theme";
@@ -17,12 +17,14 @@ import type { Theme } from "@/types";
 
 export function Header() {
   const { theme, setTheme } = useTheme();
+  const autoUpdate = useStore((s) => s.settings.autoUpdate);
+  const updateSettings = useStore((s) => s.updateSettings);
   const updateAvailable = useStore((s) => s.updateAvailable);
-  const setUpdateAvailable = useStore((s) => s.setUpdateAvailable);
+  const updatePendingRestart = useStore((s) => s.updatePendingRestart);
+  const updating = useStore((s) => s.updating);
+  const rendering = useStore((s) => !!s.queue);
 
   const [checking, setChecking] = useState(false);
-  const [installing, setInstalling] = useState(false);
-  const [updateHandle, setUpdateHandle] = useState<Awaited<ReturnType<typeof check>> | null>(null);
 
   const themeIcons: Record<Theme, typeof Sun> = {
     light: Sun,
@@ -31,38 +33,18 @@ export function Header() {
   };
   const ThemeIcon = themeIcons[theme] ?? Monitor;
 
+  // Installs the known release, or looks for one first.
   const handleUpdateClick = async () => {
     if (updateAvailable) {
-      setInstalling(true);
-      try {
-        const handle = updateHandle ?? (await check());
-        if (handle?.available) {
-          await handle.downloadAndInstall();
-          await relaunch();
-        } else {
-          setUpdateAvailable(null);
-          toastInfo({ message: "No update available." });
-        }
-      } catch (err) {
-        toastError({
-          message: "Failed to install update",
-          description: err instanceof Error ? err.message : String(err),
-        });
-      } finally {
-        setInstalling(false);
-      }
+      await useStore.getState().installUpdate();
       return;
     }
-
     setChecking(true);
     try {
-      const update = await check();
-      if (update?.available) {
-        setUpdateAvailable(update.version);
-        setUpdateHandle(update);
-        toastSuccess({ message: `Update v${update.version} ready to install` });
+      const version = await useStore.getState().checkForUpdates();
+      if (version) {
+        toastSuccess({ message: `Update v${version} ready to install` });
       } else {
-        setUpdateAvailable(null);
         toastInfo({ message: "You are on the latest version." });
       }
     } catch (err) {
@@ -74,6 +56,8 @@ export function Header() {
       setChecking(false);
     }
   };
+
+  const ready = !!updateAvailable || updatePendingRestart;
 
   return (
     <header className="border-border bg-background/80 flex items-center justify-between border-b px-4 py-3 backdrop-blur-sm">
@@ -89,21 +73,34 @@ export function Header() {
 
       <div className="flex items-center gap-2">
         <Button
-          variant={updateAvailable ? "default" : "outline"}
+          variant={ready ? "default" : "outline"}
           size="sm"
-          disabled={checking || installing}
+          disabled={checking || updating || rendering}
           onClick={handleUpdateClick}
           className={`h-8 gap-1.5 text-xs ${
-            updateAvailable
+            ready
               ? "bg-primary text-primary-foreground hover:bg-primary/90"
               : "text-muted-foreground hover:text-foreground"
           }`}
-          title={updateAvailable ? `Install v${updateAvailable}` : "Check for updates"}
+          title={
+            updating
+              ? `Downloading v${updateAvailable}…`
+              : updatePendingRestart
+                ? `Version ${updateAvailable} downloaded — restart to update`
+                : updateAvailable
+                  ? `Install v${updateAvailable}`
+                  : "Check for updates"
+          }
         >
-          {installing ? (
+          {updating ? (
             <>
               <Loader2 className="size-3.5 animate-spin" />
-              <span>Installing...</span>
+              <span>Downloading...</span>
+            </>
+          ) : updatePendingRestart ? (
+            <>
+              <RotateCcw className="size-3.5" />
+              <span>Restart to update</span>
             </>
           ) : updateAvailable ? (
             <>
@@ -132,6 +129,13 @@ export function Header() {
             <DropdownMenuItem onClick={() => setTheme("system")}>
               <Monitor className="mr-2 size-4" /> System
             </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuCheckboxItem
+              checked={autoUpdate}
+              onCheckedChange={(v) => updateSettings({ autoUpdate: v })}
+            >
+              Auto-update
+            </DropdownMenuCheckboxItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

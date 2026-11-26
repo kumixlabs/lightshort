@@ -8,7 +8,7 @@ import { checkFfmpeg } from "@/lib/commands";
 export function Footer() {
   const [ffmpegPath, setFfmpegPath] = useState<string | null>(null);
   const [ffmpegStatus, setFfmpegStatus] = useState<"loading" | "active" | "missing">("loading");
-  const [version, setVersion] = useState("0.1.0");
+  const [version, setVersion] = useState("");
 
   useEffect(() => {
     let cancelled = false;
@@ -78,9 +78,11 @@ export function Footer() {
         </div>
 
         {/* Right: App Version */}
-        <Badge variant="primary-light" size="xs" className="shrink-0 font-mono">
-          v{version}
-        </Badge>
+        {version && (
+          <Badge variant="primary-light" size="xs" className="shrink-0 font-mono">
+            v{version}
+          </Badge>
+        )}
       </div>
     </footer>
   );
